@@ -1127,6 +1127,52 @@ func TestClear(t *testing.T) {
 			Expected: &terraform.InstanceDiff{Attributes: map[string]*terraform.ResourceAttrDiff{}},
 		},
 		{
+			Name: "basic sub-map diff with nil",
+			Schema: map[string]*Schema{
+				"foo": {
+					Type:     TypeMap,
+					Optional: true,
+					Computed: true,
+					Elem: map[string]*Schema{
+						"bar": {
+							Type:     TypeString,
+							Optional: true,
+							Computed: true,
+						},
+						"baz": {
+							Type:     TypeString,
+							Optional: true,
+							Computed: true,
+						},
+					},
+				},
+			},
+			State: &terraform.InstanceState{
+				Attributes: map[string]string{
+					"foo.bar": "bar1",
+					"foo.baz": "baz1",
+				},
+			},
+			Config: testConfig(t, map[string]interface{}{
+				"foo": []interface{}{
+					map[string]interface{}{
+						"bar": "",
+						"baz": "baz1",
+					},
+				},
+			}),
+			Diff: &terraform.InstanceDiff{
+				Attributes: map[string]*terraform.ResourceAttrDiff{
+					"foo.0.bar": {
+						Old: "bar1",
+						New: "",
+					},
+				},
+			},
+			Key:      "foo.0.bar",
+			Expected: &terraform.InstanceDiff{Attributes: map[string]*terraform.ResourceAttrDiff{}},
+		},
+		{
 			Name: "sub-block diff only partial clear",
 			Schema: map[string]*Schema{
 				"foo": {
