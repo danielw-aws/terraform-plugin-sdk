@@ -1163,13 +1163,13 @@ func TestClear(t *testing.T) {
 			}),
 			Diff: &terraform.InstanceDiff{
 				Attributes: map[string]*terraform.ResourceAttrDiff{
-					"foo.0.bar": {
+					"foo.bar": {
 						Old: "bar1",
 						New: "",
 					},
 				},
 			},
-			Key:      "foo.0.bar",
+			Key:      "foo.bar",
 			Expected: &terraform.InstanceDiff{Attributes: map[string]*terraform.ResourceAttrDiff{}},
 		},
 		{
